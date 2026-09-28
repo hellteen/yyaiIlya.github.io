@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Свидание в Blackrooms ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Pacifico&display=swap');
+
+        :root {
+            --bg-color: #fde8e9;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #5a3a42;
+            --accent: #ff8fab;
+            --accent-hover: #ff5c8a;
+            --heart-color: #ffb3c6;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Comfortaa', cursive;
+            background-color: var(--bg-color);
+            background: linear-gradient(135deg, #fde8e9 0%, #fae0e4 100%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Контейнер с контентом */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 90%;
+            width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 143, 171, 0.2);
+            z-index: 10;
+            margin: 20px 0;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: var(--accent-hover);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            margin-bottom: 25px;
+            color: #7b5b63;
+        }
+
+        /* Таймер */
+        .timer-container {
+            background: rgba(255, 143, 171, 0.1);
+            border: 2px dashed var(--accent);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .timer-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        #timer {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-hover);
+        }
+
+        /* Инфо о свидании */
+        .date-info {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .date-info strong {
+            color: var(--accent-hover);
+            font-size: 1.2rem;
+        }
+
+        /* Выбор даты */
+        .date-picker-box {
+            margin-bottom: 30px;
+        }
+
+        .date-picker-box label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input[type="date"] {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1rem;
+            padding: 10px 15px;
+            border: 2px solid #ffb3c6;
+            border-radius: 12px;
+            color: var(--text-main);
+            outline: none;
+            background: #fff;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--accent-hover);
+        }
+
+        /* Плашка с вопросом и кнопки */
+        .question-box {
+            margin-top: 20px;
+        }
+
+        .question-box h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent-hover);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            min-height: 60px;
+        }
+
+        button {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 143, 171, 0.3);
+        }
+
+        #btn-yes {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        #btn-yes:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        #btn-no {
+            background-color: #fff;
+            color: var(--text-main);
+            border: 2px solid var(--accent);
+            position: relative; /* Будет меняться на fixed скриптом */
+            z-index: 20;
+        }
+
+        #success-msg {
+            display: none;
+            margin-top: 20px;
+            color: var(--accent-hover);
+            font-weight: 700;
+            font-size: 1.2rem;
+            animation: fadeIn 1s;
+        }
+
+        /* Анимация падающих сердечек на фоне */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            top: -10vh;
+            color: var(--heart-color);
+            font-size: 20px;
+            opacity: 0.7;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Адаптация под мобильные */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .container { padding: 20px; }
+            #timer { font-size: 1rem; }
+            button { padding: 10px 25px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Контейнер для фоновых сердечек -->
+    <div class="hearts-bg" id="hearts-bg"></div>
+
+    <div class="container">
+        <h1>С праздником, любимый! ❤️</h1>
+        <p class="subtitle">Уже пошел 3-й год как мы общаемся... Ровно 2 года с момента нашего общения!</p>
+
+        <div class="timer-container">
+            <div class="timer-title">С 28 сентября 2024 года, 19:51 прошло:</div>
+            <div id="timer">Загрузка...</div>
+        </div>
+
+        <p class="date-info">
+            Я приглашаю тебя на свидание в <strong>Blackrooms</strong><br>
+            по адресу: <em>пр-кт Николая Корыткова, 28б</em>
+        </p>
+
+        <div class="date-picker-box">
+            <label for="date-select">Выбери день нашего свидания:</label>
+            <!-- Ограничение: не включая сентябрь и октябрь до 6 числа (min = 7 октября текущего года) -->
+            <input type="date" id="date-select" required>
+        </div>
+
+        <div class="question-box">
+            <h2>Пойдёшь со мной на свидание?</h2>
+            <div class="buttons">
+                <button id="btn-yes">Да, конечно!</button>
+                <button id="btn-no">Нет</button>
+            </div>
+            <div id="success-msg">Ура! Жду с нетерпением! ❤️💋</div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Настройка таймера
+        const startDate = new Date('2024-09-28T19:51:00').getTime();
+        const timerElement = document.getElementById('timer');
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const difference = now - startDate;
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            timerElement.innerHTML = `${days} дн. ${hours} ч. ${minutes} мин. ${seconds} сек.`;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // 2. Ограничение выбора даты (начиная с 7 октября)
+        // Если текущий год 2024, 2025, 2026 и т.д., ставим минимальную дату
+        const dateInput = document.getElementById('date-select');
+        const currentYear = new Date().getFullYear();
+        // Формат YYYY-MM-DD. Месяц 10 - это октябрь.
+        dateInput.min = `${currentYear}-10-07`;
+
+        // 3. Убегающая кнопка "Нет"
+        const btnNo = document.getElementById('btn-no');
+        const btnYes = document.getElementById('btn-yes');
+        const successMsg = document.getElementById('success-msg');
+
+        function runawayButton() {
+            // Переключаем кнопку в absolute/fixed для свободного перемещения по экрану
+            btnNo.style.position = 'fixed';
+            
+            // Вычисляем случайные координаты в пределах окна
+            const maxX = window.innerWidth - btnNo.offsetWidth - 20;
+            const maxY = window.innerHeight - btnNo.offsetHeight - 20;
+            
+            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+            btnNo.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+        }
+
+        // События для мыши и для мобильных устройств (touch)
+        btnNo.addEventListener('mouseover', runawayButton);
+        btnNo.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Предотвращаем клик на мобилках
+            runawayButton();
+        });
+
+        // 4. Обработка согласия
+        btnYes.addEventListener('click', () => {
+            const selectedDate = dateInput.value;
+            if(!selectedDate) {
+                alert("Пожалуйста, выбери дату сначала! 🥰");
+                return;
+            }
+            
+            // Скрываем кнопки, показываем сообщение
+            document.querySelector('.buttons').style.display = 'none';
+            successMsg.style.display = 'block';
+            
+            // Усиливаем снегопад из сердечек в честь согласия
+            createHearts(30);
+        });
+
+        // 5. Анимация падающих сердечек
+        function createHearts(amount) {
+            const bg = document.getElementById('hearts-bg');
+            const hearts = ['❤️', '💖', '💕', '💓', '💗'];
+            
+            for (let i = 0; i < amount; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+                    
+                    // Случайная позиция, размер и скорость
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                    
+                    bg.appendChild(heart);
+                    
+                    // Удаляем сердечко после падения, чтобы не перегружать DOM
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 5000);
+                }, i * 300); // Появление с задержкой
+            }
+        }
+
+        // Запускаем постоянный нежный фон из сердечек
+        setInterval(() => createHearts(1), 800);
+        createHearts(10); // Начальная партия
+    </script>
+</body>
+</html>
